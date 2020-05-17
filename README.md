@@ -2,9 +2,10 @@
 
 C++ boilerplate project structure thought for C++ Padawans.
 
-- Period: _COMPLETE_
-- Yoda: _COMPLETE_
-- Padawan: _COMPLETE_
+## CI Status
+
+* ![CI master](https://github.com/glpuga/action-test-repo/workflows/CI/badge.svg?branch=master) master CI
+* ![CI devel](https://github.com/glpuga/action-test-repo/workflows/CI/badge.svg?branch=devel) devel CI
 
 ## Description
 

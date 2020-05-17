@@ -1,10 +1,5 @@
 # Sample app
 
-## CI Status
-
-* ![CI master](https://github.com/glpuga/action-test-repo/workflows/CI/badge.svg?branch=master) master CI
-* ![CI devel](https://github.com/glpuga/action-test-repo/workflows/CI/badge.svg?branch=devel) devel CI
-
 ## Building the app
 
 If you haven't built your docker image, just visit the [docker readme](../docker/README.md).
