@@ -11,6 +11,10 @@ include_directories (
 add_library(gtest STATIC gtest/src/gtest-all.cc)
 add_library(gtest_main STATIC gtest/src/gtest_main.cc)
 target_link_libraries(gtest_main gtest)
+
+set_target_properties(gtest PROPERTIES CXX_CPPLINT "")
+set_target_properties(gtest_main PROPERTIES CXX_CPPLINT "")
+
 set(GTEST_LIBRARY "${PROJECT_BINARY_DIR}/test/libgtest.a")
 set(GTEST_MAIN_LIBRARY "${PROJECT_BINARY_DIR}/test/libgtest_main.a")
 
@@ -39,13 +43,12 @@ macro (cppcourse_build_tests)
     add_executable(${BINARY_NAME} ${GTEST_SOURCE_file})
 
     add_dependencies(${BINARY_NAME}
-    	foo
-    	gtest
+      gtest
     	gtest_main
     )
 
     target_link_libraries(${BINARY_NAME}
-    	foo
+    	isometry
     )
 
     target_link_libraries(${BINARY_NAME}
