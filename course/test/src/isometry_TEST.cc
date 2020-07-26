@@ -1,116 +1,74 @@
-// This file describes a challenge of a C++ L1 Padawan. The goal
-// of this unit test is to suggest an API and the abstractions
-// needed to implement an isometry.
-
-// Consider including other header files if needed.
-#include <isometry/isometry.hpp>
+/*
+ * Isometry library tests
+ * Author: Agustin Alba Chicar, 2019
+ * Author: Gerardo Puga, 2020
+ * Author: Jose Tomas Lorente, 2020
+ * 
+ * This file describes a challenge of a C++ L1 Padawan. The goal
+ * of this unit test is to suggest an API and the abstractions
+ * needed to implement an isometry.
+ */
 
 #include <cmath>
-#include <initializer_list>
 #include <sstream>
 #include <string>
 
 #include "gtest/gtest.h"
+#include <isometry/isometry.hpp>
 
 namespace ekumen {
 namespace math {
 namespace test {
 namespace {
 
-GTEST_TEST(Vector3Test, Vector3Operations) {
-  const double kTolerance{1e-12};
-  const Vector3 p{1., 2., 3.};
-  const Vector3 q{4., 5., 6.};
-
-  EXPECT_EQ(p + q, std::initializer_list<double>({5., 7., 9.}));
-  EXPECT_EQ(p - q, std::initializer_list<double>({-3., -3., -3.}));
-  EXPECT_EQ(p * 2., Vector3(2., 4., 6));
-  EXPECT_EQ(2 * q, Vector3(8., 10., 12.));
-  EXPECT_EQ(p * q, Vector3(4., 10., 18.));
-  EXPECT_EQ(p / q, Vector3(.25, .4, .5));
-  EXPECT_NEAR(p.norm(), 3.7416573867739413, kTolerance);
-  EXPECT_EQ(p.x(), 1.);
-  EXPECT_EQ(p.y(), 2.);
-  EXPECT_EQ(p.z(), 3.);
-  EXPECT_EQ(p[0], 1.);
-  EXPECT_EQ(p[1], 2.);
-  EXPECT_EQ(p[2], 3.);
-
-  std::stringstream ss;
-  ss << p;
-  EXPECT_EQ(ss.str(), "(x: 1, y: 2, z: 3)");
-
-  EXPECT_TRUE(Vector3::kUnitX == Vector3(1., 0., 0));
-  EXPECT_TRUE(Vector3::kUnitX != std::initializer_list<double>({1., 1., 0}));
-  EXPECT_TRUE(Vector3::kUnitY == std::initializer_list<double>({0., 1., 0}));
-  EXPECT_TRUE(Vector3::kUnitZ == Vector3::kUnitX.cross(Vector3::kUnitY));
-  EXPECT_NEAR(Vector3::kUnitX.dot(Vector3::kUnitZ), 0., kTolerance);
-
-  Vector3 t;
-  EXPECT_EQ(t, Vector3::kZero);
-  t.x() = 1.;
-  t[1] = 2.;
-  t.z() = 3.;
-  EXPECT_EQ(t, p);
+testing::AssertionResult areAlmostEqual(const Isometry & obj1,
+    const Isometry & obj2, const double tolerance) {
+  if (std::abs(obj1.translation()[0] - obj2.translation()[0]) > tolerance ||
+      std::abs(obj1.translation()[1] - obj2.translation()[1]) > tolerance ||
+      std::abs(obj1.translation()[2] - obj2.translation()[2]) > tolerance ||
+      std::abs(obj1.rotation()[0][0] - obj2.rotation()[0][0]) > tolerance ||
+      std::abs(obj1.rotation()[0][1] - obj2.rotation()[0][1]) > tolerance ||
+      std::abs(obj1.rotation()[0][2] - obj2.rotation()[0][2]) > tolerance ||
+      std::abs(obj1.rotation()[1][0] - obj2.rotation()[1][0]) > tolerance ||
+      std::abs(obj1.rotation()[1][1] - obj2.rotation()[1][1]) > tolerance ||
+      std::abs(obj1.rotation()[1][2] - obj2.rotation()[1][2]) > tolerance ||
+      std::abs(obj1.rotation()[2][0] - obj2.rotation()[2][0]) > tolerance ||
+      std::abs(obj1.rotation()[2][1] - obj2.rotation()[2][1]) > tolerance ||
+      std::abs(obj1.rotation()[2][2] - obj2.rotation()[2][2]) > tolerance) {
+    return testing::AssertionFailure() <<
+      "The isometrys are not almost equal";
+  }
+  return testing::AssertionSuccess();
 }
 
-GTEST_TEST(Matrix3Test, Matrix3Operations) {
-  const double kTolerance{1e-12};
-  Matrix3 m1{{1., 2., 3.}, {4., 5., 6.}, {7., 8., 9.}};
-  const Matrix3 m2{1., 2., 3., 4., 5., 6., 7., 8., 9.};
-  const Matrix3 m3 = Matrix3::kIdentity;
-
-  EXPECT_EQ(m1, m2);
-  EXPECT_EQ(m1 - m2, Matrix3::kZero);
-  EXPECT_EQ(m1 + m2, m1 * 2.);
-  EXPECT_EQ(m1 + m2, 2. * m2);
-  EXPECT_EQ(m1 * m2, std::initializer_list<double>(
-                         {1., 4., 9., 16., 25., 36., 49., 64., 81.}));
-  EXPECT_EQ(m1 / m2, Matrix3::kOnes);
-  EXPECT_NEAR(m1.det(), 0., kTolerance);
-  m1[2][2] = 10.;
-  EXPECT_NEAR(m1.det(), -2.9999999999999996, kTolerance);
-
-  std::stringstream ss;
-  ss << m3;
-  EXPECT_EQ(ss.str(), "[[1, 0, 0], [0, 1, 0], [0, 0, 1]]");
-
-  const std::vector<Vector3> kExpectedRows{
-      Vector3(1., 2., 3.), Vector3(4., 5., 6.), Vector3(7., 8., 9.)};
-  const std::vector<Vector3> kExpectedCols{
-      Vector3(1., 4., 7.), Vector3(2., 5., 8.), Vector3(3., 6., 9.)};
-  for (const Vector3 &r : kExpectedRows) {
-    bool found{false};
-    for (int i = 0; i < 3; ++i) {
-      if (r == m2.row(i)) {
-        found = true;
-        break;
-      }
-    }
-    ASSERT_TRUE(found);
+testing::AssertionResult areAlmostEqual(const Matrix3 & obj1,
+    const Matrix3 & obj2, const double tolerance) {
+  if (std::abs(obj1[0][0] - obj2[0][0]) > tolerance ||
+  std::abs(obj1[0][1] - obj2[0][1]) > tolerance ||
+  std::abs(obj1[0][2] - obj2[0][2]) > tolerance ||
+  std::abs(obj1[1][0] - obj2[1][0]) > tolerance ||
+  std::abs(obj1[1][1] - obj2[1][1]) > tolerance ||
+  std::abs(obj1[1][2] - obj2[1][2]) > tolerance ||
+  std::abs(obj1[2][0] - obj2[2][0]) > tolerance ||
+  std::abs(obj1[2][1] - obj2[2][1]) > tolerance ||
+  std::abs(obj1[2][2] - obj2[2][2]) > tolerance) {
+    return testing::AssertionFailure() <<
+      "The isometrys are not almost equal";
   }
-  for (const Vector3 &c : kExpectedCols) {
-    bool found{false};
-    for (int i = 0; i < 3; ++i) {
-      if (c == m2.col(i)) {
-        found = true;
-        break;
-      }
-    }
-    ASSERT_TRUE(found);
-  }
+  return testing::AssertionSuccess();
 }
 
-GTEST_TEST(IsometryTest, IsometryOperations) {
+GTEST_TEST(IsometryTest, IsometryFullTests) {
   const double kTolerance{1e-12};
-  const Isometry t1 = Isometry::FromTranslation({1., 2., 3.});
-  const Isometry t2{{1., 2., 3.}, Matrix3::kIdentity};
+  const Isometry t1 = Isometry::FromTranslation(Vector3{1., 2., 3.});
+  const Isometry t2{Vector3{1., 2., 3.}, Matrix3::kIdentity};
 
   EXPECT_EQ(t1, t2);
 
   // This is not mathematically correct but it could be a nice to have.
   EXPECT_EQ(t1 * Vector3(1., 1., 1.), Vector3(2., 3., 4.));
-  EXPECT_EQ(t1.transform({1., 1., 1.}), Vector3(2., 3., 4.));
+  EXPECT_EQ(t1.transform(Vector3(std::initializer_list<double>({1., 1., 1.}))),
+    Vector3(2., 3., 4.));
   EXPECT_EQ(t1.inverse() * Vector3(2., 3., 4.), Vector3(1., 1., 1.));
   EXPECT_EQ(t1 * t2 * Vector3(1., 1., 1.), Vector3(3., 5., 7.));
   EXPECT_EQ(t1.compose(t2) * Vector3(1., 1., 1.), Vector3(3., 5., 7.));
@@ -120,28 +78,40 @@ GTEST_TEST(IsometryTest, IsometryOperations) {
   const Isometry t4{Isometry::RotateAround(Vector3::kUnitY, M_PI / 4.)};
   const Isometry t5{Isometry::RotateAround(Vector3::kUnitZ, M_PI / 8.)};
   const Isometry t6{Isometry::FromEulerAngles(M_PI / 2., M_PI / 4., M_PI / 8.)};
-  // See
-  // https://github.com/google/googletest/blob/master/googletest/docs/advanced.md#using-a-function-that-returns-an-assertionresult
   EXPECT_TRUE(areAlmostEqual(t6, t3 * t4 * t5, kTolerance));
 
   EXPECT_EQ(t3.translation(), Vector3::kZero);
   const double pi_8{M_PI / 8.};
-  const double cpi_8{std::cos(pi_8)}; // 0.923879532
-  const double spi_8{std::sin(pi_8)}; // 0.382683432
-  EXPECT_TRUE(areAlmostEqual(
-      t5.rotation(), Matrix3{cpi_8, -spi_8, 0., spi_8, cpi_8, 0., 0., 0., 1.},
-      kTolerance));
+  const double cpi_8{std::cos(pi_8)};  // 0.923879532
+  const double spi_8{std::sin(pi_8)};  // 0.382683432
+  EXPECT_TRUE(areAlmostEqual(t5.rotation(),
+    Matrix3{cpi_8, -spi_8, 0., spi_8, cpi_8, 0., 0., 0., 1.}, kTolerance));
 
   std::stringstream ss;
   ss << t5;
-  EXPECT_EQ(ss.str(), "[T: (x: 0, y: 0, z: 0), R:[[0.923879533, -0.382683432, "
-                      "0], [0.382683432, 0.923879533, 0], [0, 0, 1]]]");
+  std::string answer = "[T: (x: 0, y: 0, z: 0), ";
+  answer += "R:[[0.923879533, -0.382683432, 0],";
+  answer += " [0.382683432, 0.923879533, 0], [0, 0, 1]]]";
+  EXPECT_EQ(ss.str(), answer);
+
+  Isometry t7;
+  EXPECT_EQ(t7.rotation()[2][2], 0);
+  EXPECT_EQ(t7.translation()[2], 0);
+
+  Isometry t8 = Isometry();
+  EXPECT_EQ(t8.rotation()[2][2], 0);
+  EXPECT_EQ(t8.translation()[2], 0);
+
+  Isometry t9 = Isometry::FromTranslation(Vector3{1., 2., 3.});
+  const Isometry t10{Vector3{2., 4., 6.}, Matrix3::kIdentity};
+  EXPECT_EQ(t9 *= t2, t10);
+  EXPECT_EQ(t9 * Vector3(1., 1., 1.), Vector3(3., 5., 7.));
 }
 
-} // namespace
-} // namespace test
-} // namespace math
-} // namespace ekumen
+}  // namespace
+}  // namespace test
+}  // namespace math
+}  // namespace ekumen
 
 int main(int argc, char **argv) {
   ::testing::InitGoogleTest(&argc, argv);

@@ -1,7 +1,7 @@
 /*
  * Isometry library
- * Agustin Alba Chicar, 2019
- * Gerardo Puga, 2020
+ * Author: Agustin Alba Chicar, 2019
+ * Author: Gerardo Puga, 2020
  */
 
 #pragma once
