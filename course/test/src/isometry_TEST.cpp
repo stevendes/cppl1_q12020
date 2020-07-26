@@ -3,7 +3,7 @@
  * Author: Agustin Alba Chicar, 2019
  * Author: Gerardo Puga, 2020
  * Author: Jose Tomas Lorente, 2020
- * 
+ *
  * This file describes a challenge of a C++ L1 Padawan. The goal
  * of this unit test is to suggest an API and the abstractions
  * needed to implement an isometry.
@@ -13,16 +13,15 @@
 #include <sstream>
 #include <string>
 
-#include "gtest/gtest.h"
 #include <isometry/isometry.hpp>
+#include "gtest/gtest.h"
 
 namespace ekumen {
 namespace math {
 namespace test {
 namespace {
 
-testing::AssertionResult areAlmostEqual(const Isometry & obj1,
-    const Isometry & obj2, const double tolerance) {
+testing::AssertionResult areAlmostEqual(const Isometry &obj1, const Isometry &obj2, const double tolerance) {
   if (std::abs(obj1.translation()[0] - obj2.translation()[0]) > tolerance ||
       std::abs(obj1.translation()[1] - obj2.translation()[1]) > tolerance ||
       std::abs(obj1.translation()[2] - obj2.translation()[2]) > tolerance ||
@@ -35,30 +34,21 @@ testing::AssertionResult areAlmostEqual(const Isometry & obj1,
       std::abs(obj1.rotation()[2][0] - obj2.rotation()[2][0]) > tolerance ||
       std::abs(obj1.rotation()[2][1] - obj2.rotation()[2][1]) > tolerance ||
       std::abs(obj1.rotation()[2][2] - obj2.rotation()[2][2]) > tolerance) {
-    return testing::AssertionFailure() <<
-      "The isometrys are not almost equal";
+    return testing::AssertionFailure() << "The isometrys are not almost equal";
   }
   return testing::AssertionSuccess();
 }
 
-testing::AssertionResult areAlmostEqual(const Matrix3 & obj1,
-    const Matrix3 & obj2, const double tolerance) {
-  if (std::abs(obj1[0][0] - obj2[0][0]) > tolerance ||
-  std::abs(obj1[0][1] - obj2[0][1]) > tolerance ||
-  std::abs(obj1[0][2] - obj2[0][2]) > tolerance ||
-  std::abs(obj1[1][0] - obj2[1][0]) > tolerance ||
-  std::abs(obj1[1][1] - obj2[1][1]) > tolerance ||
-  std::abs(obj1[1][2] - obj2[1][2]) > tolerance ||
-  std::abs(obj1[2][0] - obj2[2][0]) > tolerance ||
-  std::abs(obj1[2][1] - obj2[2][1]) > tolerance ||
-  std::abs(obj1[2][2] - obj2[2][2]) > tolerance) {
-    return testing::AssertionFailure() <<
-      "The isometrys are not almost equal";
+testing::AssertionResult areAlmostEqual(const Matrix3 &obj1, const Matrix3 &obj2, const double tolerance) {
+  if (std::abs(obj1[0][0] - obj2[0][0]) > tolerance || std::abs(obj1[0][1] - obj2[0][1]) > tolerance ||
+      std::abs(obj1[0][2] - obj2[0][2]) > tolerance || std::abs(obj1[1][0] - obj2[1][0]) > tolerance ||
+      std::abs(obj1[1][1] - obj2[1][1]) > tolerance || std::abs(obj1[1][2] - obj2[1][2]) > tolerance ||
+      std::abs(obj1[2][0] - obj2[2][0]) > tolerance || std::abs(obj1[2][1] - obj2[2][1]) > tolerance ||
+      std::abs(obj1[2][2] - obj2[2][2]) > tolerance) {
+    return testing::AssertionFailure() << "The isometrys are not almost equal";
   }
   return testing::AssertionSuccess();
 }
-
-
 
 GTEST_TEST(IsometryTest, IsometryFullTests) {
   const double kTolerance{1e-12};
@@ -69,8 +59,7 @@ GTEST_TEST(IsometryTest, IsometryFullTests) {
 
   // This is not mathematically correct but it could be a nice to have.
   EXPECT_EQ(t1 * Vector3(1., 1., 1.), Vector3(2., 3., 4.));
-  EXPECT_EQ(t1.transform(Vector3(std::initializer_list<double>({1., 1., 1.}))),
-    Vector3(2., 3., 4.));
+  EXPECT_EQ(t1.transform(Vector3(std::initializer_list<double>({1., 1., 1.}))), Vector3(2., 3., 4.));
   EXPECT_EQ(t1.inverse() * Vector3(2., 3., 4.), Vector3(1., 1., 1.));
   EXPECT_EQ(t1 * t2 * Vector3(1., 1., 1.), Vector3(3., 5., 7.));
   EXPECT_EQ(t1.compose(t2) * Vector3(1., 1., 1.), Vector3(3., 5., 7.));
@@ -86,8 +75,7 @@ GTEST_TEST(IsometryTest, IsometryFullTests) {
   const double pi_8{M_PI / 8.};
   const double cpi_8{std::cos(pi_8)};  // 0.923879532
   const double spi_8{std::sin(pi_8)};  // 0.382683432
-  EXPECT_TRUE(areAlmostEqual(t5.rotation(),
-    Matrix3{cpi_8, -spi_8, 0., spi_8, cpi_8, 0., 0., 0., 1.}, kTolerance));
+  EXPECT_TRUE(areAlmostEqual(t5.rotation(), Matrix3{cpi_8, -spi_8, 0., spi_8, cpi_8, 0., 0., 0., 1.}, kTolerance));
 
   std::stringstream ss;
   ss << t5;

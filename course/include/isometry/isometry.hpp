@@ -20,6 +20,6 @@ namespace math {
  * your code here
  */
 
-} // namespace math
+}  // namespace math
 
-} // namespace ekumen
+}  // namespace ekumen

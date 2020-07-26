@@ -13,5 +13,5 @@ namespace math {
  * your code here
  */
 
-} // namespace math
-} // namespace ekumen
+}  // namespace math
+}  // namespace ekumen
