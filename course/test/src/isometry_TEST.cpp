@@ -58,6 +58,8 @@ testing::AssertionResult areAlmostEqual(const Matrix3 & obj1,
   return testing::AssertionSuccess();
 }
 
+
+
 GTEST_TEST(IsometryTest, IsometryFullTests) {
   const double kTolerance{1e-12};
   const Isometry t1 = Isometry::FromTranslation(Vector3{1., 2., 3.});

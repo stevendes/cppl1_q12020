@@ -5,10 +5,10 @@ include_directories(
 
 # Test sources.
 set (GTEST_SOURCES
-	isometry_TEST.cc
-	vector3_TEST.cc
-	matrix3_TEST.cc
-	old_general_TEST.cc
+	isometry_TEST.cpp
+	vector3_TEST.cpp
+	matrix3_TEST.cpp
+	old_general_TEST.cpp
 )
 
 cppcourse_build_tests(${GTEST_SOURCES})
