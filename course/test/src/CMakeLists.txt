@@ -8,7 +8,6 @@ set (GTEST_SOURCES
 	isometry_TEST.cpp
 	vector3_TEST.cpp
 	matrix3_TEST.cpp
-	old_general_TEST.cpp
 )
 
 cppcourse_build_tests(${GTEST_SOURCES})

@@ -1,4 +1,4 @@
-/*
+/* Copyright 2020, Ekumen
  * Isometry library tests
  * Author: Agustin Alba Chicar, 2019
  * Author: Gerardo Puga, 2020
@@ -23,42 +23,39 @@ namespace {
 
 GTEST_TEST(Matrix3Test, Matrix3FullTests) {
   const double kTolerance{1e-12};
-  Matrix3 m1{{1., 2., 3.}, {4., 5., 6.}, {7., 8., 9.}};
+  Matrix3 m1{1., 2., 3., 4., 5., 6., 7., 8., 9.};
   const Matrix3 m2{1., 2., 3., 4., 5., 6., 7., 8., 9.};
   const Matrix3 m3{1., 2., 3., 4., 5., 6., 7., 8., 9.};
 
-  EXPECT_EQ(Matrix3::kIdentity, std::initializer_list<double>({1., 0., 0., 0., 1., 0., 0., 0., 1.}));
-  EXPECT_EQ(Matrix3::kIdentity, Matrix3(1., 0., 0., 0., 1., 0., 0., 0., 1.));
-  EXPECT_EQ(Matrix3::kOnes, std::initializer_list<double>({1., 1., 1., 1., 1., 1., 1., 1., 1.}));
-  EXPECT_EQ(Matrix3::kZero, Matrix3(0., 0., 0., 0., 0., 0., 0., 0., 0.));
+  EXPECT_EQ(Matrix3::kIdentity, Matrix3({1., 0., 0., 0., 1., 0., 0., 0., 1.}));
+  EXPECT_EQ(Matrix3::kOnes, Matrix3({1., 1., 1., 1., 1., 1., 1., 1., 1.}));
+  EXPECT_EQ(Matrix3::kZero, Matrix3({0., 0., 0., 0., 0., 0., 0., 0., 0.}));
 
-  EXPECT_EQ(m2 - m3, Matrix3(0., 0., 0., 0., 0., 0., 0., 0., 0.));
-  EXPECT_EQ(m2 + m3, Matrix3(2., 4., 6., 8., 10., 12., 14., 16., 18.));
-  EXPECT_EQ(m2 * m3, std::initializer_list<double>({1., 4., 9., 16., 25., 36., 49., 64., 81.}));
-  EXPECT_EQ(m2 / m3, std::initializer_list<double>({1., 1., 1., 1., 1., 1., 1., 1., 1.}));
-  EXPECT_EQ(m2 * 2, Matrix3(2., 4., 6., 8., 10., 12., 14., 16., 18.));
-  EXPECT_EQ(2 * m2, std::initializer_list<double>({2., 4., 6., 8., 10., 12., 14., 16., 18.}));
+  EXPECT_EQ(m2 - m3, Matrix3({0., 0., 0., 0., 0., 0., 0., 0., 0.}));
+  EXPECT_EQ(m2 + m3, Matrix3({2., 4., 6., 8., 10., 12., 14., 16., 18.}));
+  EXPECT_EQ(m2 * m3, Matrix3({1., 4., 9., 16., 25., 36., 49., 64., 81.}));
+  EXPECT_EQ(m2 / m3, Matrix3({1., 1., 1., 1., 1., 1., 1., 1., 1.}));
+  EXPECT_EQ(m2 * 2, Matrix3({2., 4., 6., 8., 10., 12., 14., 16., 18.}));
+  EXPECT_EQ(2 * m2, Matrix3({2., 4., 6., 8., 10., 12., 14., 16., 18.}));
   EXPECT_EQ(m2 * Vector3(1., 0., 0.), Vector3(1., 4., 7.));
   EXPECT_NEAR(m2.det(), 0., kTolerance);
 
-  EXPECT_EQ(m1 += m3, Matrix3(2., 4., 6., 8., 10., 12., 14., 16., 18.));
-  EXPECT_EQ(m1, std::initializer_list<double>({2., 4., 6., 8., 10., 12., 14., 16., 18.}));
-  EXPECT_EQ(m1 -= m3, Matrix3(1., 2., 3., 4., 5., 6., 7., 8., 9.));
-  EXPECT_EQ(m1, std::initializer_list<double>({1., 2., 3., 4., 5., 6., 7., 8., 9.}));
-  EXPECT_EQ(m1 *= m3, Matrix3(1., 4., 9., 16., 25., 36., 49., 64., 81.));
-  EXPECT_EQ(m1, std::initializer_list<double>({1., 4., 9., 16., 25., 36., 49., 64., 81.}));
-  EXPECT_EQ(m1 /= m3, Matrix3(1., 2., 3., 4., 5., 6., 7., 8., 9.));
-  EXPECT_EQ(m1, std::initializer_list<double>({1., 2., 3., 4., 5., 6., 7., 8., 9.}));
-  EXPECT_EQ(m1 *= 2, Matrix3(2., 4., 6., 8., 10., 12., 14., 16., 18.));
-  EXPECT_EQ(m1, std::initializer_list<double>({2., 4., 6., 8., 10., 12., 14., 16., 18.}));
-  EXPECT_EQ(m1 /= 2, Matrix3(1., 2., 3., 4., 5., 6., 7., 8., 9.));
-  EXPECT_EQ(m1, std::initializer_list<double>({1., 2., 3., 4., 5., 6., 7., 8., 9.}));
+  EXPECT_EQ(m1 += m3, Matrix3({2., 4., 6., 8., 10., 12., 14., 16., 18.}));
+  EXPECT_EQ(m1 -= m3, Matrix3({1., 2., 3., 4., 5., 6., 7., 8., 9.}));
+  EXPECT_EQ(m1 *= m3, Matrix3({1., 4., 9., 16., 25., 36., 49., 64., 81.}));
+  EXPECT_EQ(m1 /= m3, Matrix3({1., 2., 3., 4., 5., 6., 7., 8., 9.}));
+  EXPECT_EQ(m1 *= 2, Matrix3({2., 4., 6., 8., 10., 12., 14., 16., 18.}));
+  EXPECT_EQ(m1 /= 2, Matrix3({1., 2., 3., 4., 5., 6., 7., 8., 9.}));
 
-  m1 = Matrix3(1., 4., 9., 16., 25., 36., 49., 64., 81.);
+  m1 = Matrix3({1., 4., 9., 16., 25., 36., 49., 64., 81.});
   EXPECT_TRUE(m1 == m2 * m3);
   EXPECT_TRUE(m1 != m2);
-  EXPECT_TRUE(m1 == std::initializer_list<double>({1., 4., 9., 16., 25., 36., 49., 64., 81.}));
-  EXPECT_TRUE(m1 != std::initializer_list<double>({1., 2., 3., 4., 5., 6., 7., 8., 9.}));
+  EXPECT_EQ(Matrix3::kIdentity, Matrix3::kIdentity);
+  EXPECT_EQ(Matrix3::kOnes, Matrix3::kOnes);
+  EXPECT_EQ(Matrix3::kZero, Matrix3::kZero);
+  EXPECT_NE(Matrix3::kIdentity, Matrix3::kOnes);
+  EXPECT_NE(Matrix3::kIdentity, Matrix3::kZero);
+  EXPECT_NE(Matrix3::kOnes, Matrix3::kZero);
 
   std::stringstream ss;
   ss << m3;
@@ -120,9 +117,6 @@ GTEST_TEST(Matrix3Test, Matrix3FullTests) {
   EXPECT_ANY_THROW(m4[0][1234] = 0);
 
   Matrix3 m4_moved = std::move(m4);
-  EXPECT_TRUE(m4_moved[0].get_moved());
-  EXPECT_TRUE(m4_moved[1].get_moved());
-  EXPECT_TRUE(m4_moved[2].get_moved());
   EXPECT_EQ(m4_moved[0][0], 1);
   EXPECT_EQ(m4_moved[0][1], 2);
   EXPECT_EQ(m4_moved[0][2], 3);

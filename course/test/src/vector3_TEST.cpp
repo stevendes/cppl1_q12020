@@ -1,4 +1,4 @@
-/*
+/* Copyright 2020, Ekumen
  * Isometry library tests
  * Author: Agustin Alba Chicar, 2019
  * Author: Gerardo Puga, 2020
@@ -27,15 +27,11 @@ GTEST_TEST(Vector3Test, Vector3FullTests) {
   const Vector3 q{4., 5., 6.};
   Vector3 r{1., 1., 1.};
 
+  std::cerr << Vector3::kUnitX - Vector3(1., 0., 0.) << std::endl;
+
   EXPECT_TRUE(Vector3::kUnitX == Vector3(1., 0., 0.));
   EXPECT_TRUE(Vector3::kUnitY == Vector3(0., 1., 0.));
   EXPECT_TRUE(Vector3::kUnitZ == Vector3(0., 0., 1.));
-  EXPECT_TRUE(Vector3::kUnitX == std::initializer_list<double>({1., 0., 0.}));
-  EXPECT_TRUE(Vector3::kUnitY == std::initializer_list<double>({0., 1., 0.}));
-  EXPECT_TRUE(Vector3::kUnitZ == std::initializer_list<double>({0., 0., 1.}));
-  EXPECT_TRUE(Vector3::kUnitX != std::initializer_list<double>({1., 1., 0.}));
-  EXPECT_TRUE(Vector3::kUnitY != std::initializer_list<double>({0., 1., 1.}));
-  EXPECT_TRUE(Vector3::kUnitZ != std::initializer_list<double>({1., 0., 1.}));
   EXPECT_TRUE(Vector3::kUnitZ == Vector3::kUnitX.cross(Vector3::kUnitY));
   EXPECT_TRUE(Vector3::kUnitY == Vector3::kUnitZ.cross(Vector3::kUnitX));
   EXPECT_TRUE(Vector3::kUnitX == Vector3::kUnitY.cross(Vector3::kUnitZ));
@@ -43,33 +39,25 @@ GTEST_TEST(Vector3Test, Vector3FullTests) {
   EXPECT_NEAR(Vector3::kUnitX.dot(Vector3::kUnitY), 0., kTolerance);
   EXPECT_NEAR(Vector3::kUnitY.dot(Vector3::kUnitZ), 0., kTolerance);
 
-  EXPECT_EQ(p + q, std::initializer_list<double>({5., 7., 9.}));
-  EXPECT_EQ(p - q, std::initializer_list<double>({-3., -3., -3.}));
-  EXPECT_EQ(p * q, std::initializer_list<double>({4., 10., 18.}));
-  EXPECT_EQ(p / q, std::initializer_list<double>({.25, .4, .5}));
+  EXPECT_EQ(p + q, Vector3({5., 7., 9.}));
+  EXPECT_EQ(p - q, Vector3({-3., -3., -3.}));
+  EXPECT_EQ(p * q, Vector3({4., 10., 18.}));
+  EXPECT_EQ(p / q, Vector3({.25, .4, .5}));
   EXPECT_EQ(p * 2., Vector3(2., 4., 6.));
   EXPECT_EQ(q / 2., Vector3(2., 2.5, 3.));
   EXPECT_EQ(2 * q, Vector3(8., 10., 12.));
   EXPECT_NEAR(p.dot(q), 32., kTolerance);
 
   EXPECT_EQ(r += q, Vector3(5., 6., 7.));
-  EXPECT_EQ(r, std::initializer_list<double>({5., 6., 7.}));
   EXPECT_EQ(r -= q, Vector3(1., 1., 1.));
-  EXPECT_EQ(r, std::initializer_list<double>({1., 1., 1.}));
   EXPECT_EQ(r *= q, Vector3(4., 5., 6.));
-  EXPECT_EQ(r, std::initializer_list<double>({4., 5., 6.}));
   EXPECT_EQ(r /= q, Vector3(1., 1., 1.));
-  EXPECT_EQ(r, std::initializer_list<double>({1., 1., 1.}));
   EXPECT_EQ(r *= 2, Vector3(2., 2., 2.));
-  EXPECT_EQ(r, std::initializer_list<double>({2., 2., 2.}));
   EXPECT_EQ(r /= 2, Vector3(1., 1., 1.));
-  EXPECT_EQ(r, std::initializer_list<double>({1., 1., 1.}));
 
   r = Vector3(1., 2., 3.);
   EXPECT_TRUE(r == p);
   EXPECT_TRUE(r != q);
-  EXPECT_TRUE(r == std::initializer_list<double>({1., 2., 3.}));
-  EXPECT_TRUE(r != std::initializer_list<double>({1., 2., 0.}));
 
   EXPECT_NEAR(p.norm(), 3.7416573867739413, kTolerance);
   EXPECT_EQ(p.x(), 1.);
@@ -115,7 +103,6 @@ GTEST_TEST(Vector3Test, Vector3FullTests) {
   EXPECT_ANY_THROW(t[10]);
 
   Vector3 t_moved = std::move(t);
-  EXPECT_TRUE(t_moved.get_moved());
   EXPECT_NEAR(t_moved.norm(), 3.7416573867739413, kTolerance);
   EXPECT_EQ(t_moved.x(), 1.);
   EXPECT_EQ(t_moved.y(), 2.);
