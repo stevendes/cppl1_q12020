@@ -31,4 +31,4 @@ RUN pip3 install cpplint
 
 RUN mkdir /course
 WORKDIR /course
-CMD tmux
+CMD /bin/bash
