@@ -1,4 +1,3 @@
 Language: Cpp
 BasedOnStyle: Google
-# Use 120 columns for C++
-ColumnLimit: 120
+ColumnLimit: 80
