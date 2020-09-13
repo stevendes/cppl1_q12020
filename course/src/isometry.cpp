@@ -10,28 +10,16 @@
 namespace ekumen {
 namespace math {
 
-Vector3::Vector3(double x, double y, double z) {
-  this->x_ = x;
-  this->y_ = y;
-  this->z_ = z;
-}
-
 Vector3::Vector3(std::initializer_list<double> list) {
   if (list.size() != 3) {
     throw std::out_of_range("Incorret size of list");
   }
   auto it = list.begin();
-  this->x_ = *it;
-  it++;
-  this->y_ = *it;
-  it++;
-  this->z_ = *it;
-}
-
-Vector3::Vector3() {
-  this->x_ = 0;
-  this->y_ = 0;
-  this->z_ = 0;
+  x_ = *it;
+  ++it;
+  y_ = *it;
+  ++it;
+  z_ = *it;
 }
 
 double Vector3::operator[](const int i) const {
@@ -39,11 +27,11 @@ double Vector3::operator[](const int i) const {
     throw std::out_of_range("Operator out of range");
   }
   if (i == 0) {
-    return this->x_;
+    return x_;
   } else if (i == 1) {
-    return this->y_;
+    return y_;
   } else {
-    return this->z_;
+    return z_;
   }
 }
 
@@ -52,11 +40,11 @@ double& Vector3::operator[](const int i) {
     throw std::out_of_range("Operator out of range");
   }
   if (i == 0) {
-    return this->x_;
+    return x_;
   } else if (i == 1) {
-    return this->y_;
+    return y_;
   } else {
-    return this->z_;
+    return z_;
   }
 }
 
@@ -68,168 +56,130 @@ Vector3 Vector3::kUnitZ{Vector3(0, 0, 1)};
 
 Vector3 Vector3::kZero{Vector3(0, 0, 0)};
 
-
 bool Vector3::operator==(const Vector3& r_vector) const {
-  bool result = true;
-  if (!((this->x_ == r_vector.x_) && (this->y_ == r_vector.y_) && (
-    this->z_ == r_vector.z_))) {
-    result = false;
-  }
-
-  return result;
-}
-
-bool Vector3::operator!=(const Vector3& r_vector) const {
   bool result = false;
-  if ((this->x_ != r_vector.x_) || (this->y_ != r_vector.y_) || (
-    this->z_ == r_vector.z_)) {
+  if (almost_equal(x_, r_vector.x_, 2) && almost_equal(y_, r_vector.y_, 2) &&
+      almost_equal(z_, r_vector.z_, 2)) {
     result = true;
   }
 
   return result;
 }
 
+bool Vector3::operator!=(const Vector3& r_vector) const {
+  return !(*this == r_vector);
+}
+
 Vector3& Vector3::operator+=(const Vector3& r_vector) {
-  this->x_ = this->x_ + r_vector.x_;
-  this->y_ = this->y_ + r_vector.y_;
-  this->z_ = this->z_ + r_vector.z_;
+  x_ = x_ + r_vector.x_;
+  y_ = y_ + r_vector.y_;
+  z_ = z_ + r_vector.z_;
 
   return *this;
 }
 
 Vector3 Vector3::operator+(const Vector3& r_vector) const {
-  double new_x, new_y, new_z;
-  new_x = this->x_ + r_vector.x_;
-  new_y = this->y_ + r_vector.y_;
-  new_z = this->z_ + r_vector.z_;
-
-  return Vector3(new_x, new_y, new_z);
-}
-
-Vector3 Vector3::operator-(const Vector3& r_vector) const {
-  double new_x, new_y, new_z;
-  new_x = this->x_ - r_vector.x_;
-  new_y = this->y_ - r_vector.y_;
-  new_z = this->z_ - r_vector.z_;
-
-  return Vector3(new_x, new_y, new_z);
+  Vector3 aux{*this};
+  aux += r_vector;
+  return aux;
 }
 
 Vector3& Vector3::operator-=(const Vector3& r_vector) {
-  this->x_ = this->x_ - r_vector.x_;
-  this->y_ = this->y_ - r_vector.y_;
-  this->z_ = this->z_ - r_vector.z_;
+  x_ = x_ - r_vector.x_;
+  y_ = y_ - r_vector.y_;
+  z_ = z_ - r_vector.z_;
+
+  return *this;
+}
+
+Vector3 Vector3::operator-(const Vector3& r_vector) const {
+  Vector3 aux{*this};
+  aux -= r_vector;
+  return aux;
+}
+
+Vector3& Vector3::operator*=(const Vector3& r_vector) {
+  x_ = x_ * r_vector.x_;
+  y_ = y_ * r_vector.y_;
+  z_ = z_ * r_vector.z_;
+
+  return *this;
+}
+
+Vector3& Vector3::operator*=(const double& int_value) {
+  x_ = x_ * int_value;
+  y_ = y_ * int_value;
+  z_ = z_ * int_value;
 
   return *this;
 }
 
 Vector3 Vector3::operator*(const double& int_value) const {
-  double new_x, new_y, new_z;
-  new_x = this->x_ * int_value;
-  new_y = this->y_ * int_value;
-  new_z = this->z_ * int_value;
-
-  return Vector3(new_x, new_y, new_z);
-}
-
-Vector3& Vector3::operator*=(const double& int_value) {
-  this->x_ = this->x_ * int_value;
-  this->y_ = this->y_ * int_value;
-  this->z_ = this->z_ * int_value;
-
-  return *this;
+  Vector3 aux{*this};
+  aux *= int_value;
+  return aux;
 }
 
 Vector3 Vector3::operator*(const Vector3& r_vector) const {
-  double new_x, new_y, new_z;
-  new_x = this->x_ * r_vector.x_;
-  new_y = this->y_ * r_vector.y_;
-  new_z = this->z_ * r_vector.z_;
-
-  return Vector3(new_x, new_y, new_z);
-}
-
-Vector3& Vector3::operator*=(const Vector3& r_vector) {
-  this->x_ = this->x_ * r_vector.x_;
-  this->y_ = this->y_ * r_vector.y_;
-  this->z_ = this->z_ * r_vector.z_;
-
-  return *this;
-}
-
-Vector3 Vector3::operator/ (const double& int_value) const {
-  double new_x, new_y, new_z;
-  new_x = this->x_ / int_value;
-  new_y = this->y_ / int_value;
-  new_z = this->z_ / int_value;
-
-  return Vector3(new_x, new_y, new_z);
-}
-
-Vector3& Vector3::operator/=(const double& v) {
-  this->x_ = this->x_ / v;
-  this->y_ = this->y_ / v;
-  this->z_ = this->z_ / v;
-
-  return *this;
-}
-
-Vector3 Vector3::operator/(const Vector3& r_vector) const {
-  double new_x, new_y, new_z;
-  new_x = this->x_ / r_vector.x_;
-  new_y = this->y_ / r_vector.y_;
-  new_z = this->z_ / r_vector.z_;
-
-  return Vector3(new_x, new_y, new_z);
+  Vector3 aux{*this};
+  aux *= r_vector;
+  return aux;
 }
 
 Vector3& Vector3::operator/=(const Vector3& r_vector) {
-  this->x_ = this->x_ / r_vector.x_;
-  this->y_ = this->y_ / r_vector.y_;
-  this->z_ = this->z_ / r_vector.z_;
+  x_ = x_ / r_vector.x_;
+  y_ = y_ / r_vector.y_;
+  z_ = z_ / r_vector.z_;
 
   return *this;
+}
+
+Vector3& Vector3::operator/=(const double& v) {
+  x_ = x_ / v;
+  y_ = y_ / v;
+  z_ = z_ / v;
+
+  return *this;
+}
+
+Vector3 Vector3::operator/(const double& int_value) const {
+  Vector3 aux{*this};
+  aux *= int_value;
+  return aux;
+}
+
+Vector3 Vector3::operator/(const Vector3& r_vector) const {
+  Vector3 aux{*this};
+  aux /= r_vector;
+  return aux;
 }
 
 double Vector3::dot(const Vector3& r_vector) const {
   double result;
-  result = this->x_ * r_vector.x_ + this->y_ * r_vector.y_ +
-  this->z_ * r_vector.z_;
+  result = x_ * r_vector.x_ + y_ * r_vector.y_ + z_ * r_vector.z_;
   return result;
 }
 
 Vector3 Vector3::cross(const Vector3& r_vector) const {
   double new_x, new_y, new_z;
-  new_x = this->y_ * r_vector.z_ - this->z_ * r_vector.y_;
-  new_y = this->z_ * r_vector.x_ - this->x_ * r_vector.z_;
-  new_z = this->x_ * r_vector.y_ - this->y_ * r_vector.x_;
+  new_x = y_ * r_vector.z_ - z_ * r_vector.y_;
+  new_y = z_ * r_vector.x_ - x_ * r_vector.z_;
+  new_z = x_ * r_vector.y_ - y_ * r_vector.x_;
 
-  return Vector3(new_x, new_y, new_z);
+  return {new_x, new_y, new_z};
 }
 
-double Vector3::norm() const {
-  double aux_x, aux_y, aux_z, result;
-  aux_x = pow(this->x_ , 2);
-  aux_y = pow(this->y_ , 2);
-  aux_z = pow(this->z_ , 2);
-  result = sqrt(aux_x + aux_y + aux_z);
-  return result;
-}
+double Vector3::norm() const { return dot(*this); }
 
-Vector3 operator*(const int i, const Vector3& r_vector) {
-  double new_x, new_y, new_z;
-  new_x = i * r_vector.x();
-  new_y = i * r_vector.y();
-  new_z = i * r_vector.z();
-  return Vector3(new_x, new_y, new_z);
+Vector3 operator*(const double double_value, const Vector3& r_vector) {
+  return r_vector * double_value;
 }
 
 std::ostream& operator<<(std::ostream& os, const Vector3& r_vector) {
-    os << '[' << r_vector.x() << ',' << r_vector.y() <<
-    ',' << r_vector.z() << ']';
-    return os;
+  os << '[' << r_vector.x() << ',' << r_vector.y() << ',' << r_vector.z()
+     << ']';
+  return os;
 }
-
 
 }  // namespace math
 }  // namespace ekumen
