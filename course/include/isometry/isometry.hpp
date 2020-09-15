@@ -30,7 +30,7 @@ almost_equal(T x, T y, int ulp) {
 
 class Vector3 {
  public:
-  Vector3(double x, double y, double z) : x_{x}, y_{y}, z_{z} {};
+  Vector3(const double x,const double y,const double z) : x_{x}, y_{y}, z_{z} {};
   Vector3(std::initializer_list<double> list);
   Vector3() : x_{0}, y_{0}, z_{0} {};
 
@@ -54,12 +54,12 @@ class Vector3 {
   Vector3 operator-(const Vector3& r_vector) const;
   Vector3& operator+=(const Vector3& r_vector);
   Vector3 operator+(const Vector3& r_vector) const;
-  Vector3& operator*=(const double& int_value);
-  Vector3 operator*(const double& int_value) const;
+  Vector3& operator*=(const double& number);
+  Vector3 operator*(const double& number) const;
   Vector3& operator*(const Vector3& r_vector);
   Vector3 operator*(const Vector3& r_vector) const;
   Vector3& operator*=(const Vector3& r_vector);
-  Vector3 operator/(const double& int_value) const;
+  Vector3 operator/(const double& number) const;
   Vector3& operator/=(const double& v);
   Vector3 operator/(const Vector3& r_vector) const;
   Vector3& operator/=(const Vector3& r_vector);

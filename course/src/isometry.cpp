@@ -12,7 +12,7 @@ namespace math {
 
 Vector3::Vector3(std::initializer_list<double> list) {
   if (list.size() != 3) {
-    throw std::out_of_range("Incorret size of list");
+    throw std::out_of_range("Incorrect size of list");
   }
   auto it = list.begin();
   x_ = *it;
@@ -106,17 +106,17 @@ Vector3& Vector3::operator*=(const Vector3& r_vector) {
   return *this;
 }
 
-Vector3& Vector3::operator*=(const double& int_value) {
-  x_ = x_ * int_value;
-  y_ = y_ * int_value;
-  z_ = z_ * int_value;
+Vector3& Vector3::operator*=(const double& number) {
+  x_ = x_ * number;
+  y_ = y_ * number;
+  z_ = z_ * number;
 
   return *this;
 }
 
-Vector3 Vector3::operator*(const double& int_value) const {
+Vector3 Vector3::operator*(const double& number) const {
   Vector3 aux{*this};
-  aux *= int_value;
+  aux *= number;
   return aux;
 }
 
@@ -142,9 +142,9 @@ Vector3& Vector3::operator/=(const double& v) {
   return *this;
 }
 
-Vector3 Vector3::operator/(const double& int_value) const {
+Vector3 Vector3::operator/(const double& number) const {
   Vector3 aux{*this};
-  aux *= int_value;
+  aux *= number;
   return aux;
 }
 
@@ -171,8 +171,8 @@ Vector3 Vector3::cross(const Vector3& r_vector) const {
 
 double Vector3::norm() const { return dot(*this); }
 
-Vector3 operator*(const double double_value, const Vector3& r_vector) {
-  return r_vector * double_value;
+Vector3 operator*(const double number, const Vector3& r_vector) {
+  return r_vector * number;
 }
 
 std::ostream& operator<<(std::ostream& os, const Vector3& r_vector) {
