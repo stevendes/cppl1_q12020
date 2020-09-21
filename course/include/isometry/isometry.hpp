@@ -10,7 +10,6 @@
 #include <cmath>
 #include <initializer_list>
 #include <iostream>
-#include <limits>
 #include <sstream>
 #include <stdexcept>
 #include <string>
@@ -31,7 +30,7 @@ almost_equal(T x, T y, int ulp) {
 class Vector3 {
  public:
   Vector3(const double x,const double y,const double z) : x_{x}, y_{y}, z_{z} {};
-  Vector3(std::initializer_list<double> list);
+  Vector3(const std::initializer_list<double>& list);
   Vector3() : x_{0}, y_{0}, z_{0} {};
 
   double operator[](const int i) const;
@@ -75,7 +74,7 @@ class Vector3 {
   double z_;
 };
 
-Vector3 operator*(const double double_value, const Vector3& r_vector);
+Vector3 operator*(const double value, const Vector3& r_vector);
 
 std::ostream& operator<<(std::ostream& os, const Vector3& r_vector);
 
