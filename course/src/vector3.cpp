@@ -147,7 +147,7 @@ Vector3& Vector3::operator/=(const double& v) {
 
 Vector3 Vector3::operator/(const double& number) const {
   Vector3 aux{*this};
-  aux *= number;
+  aux /= number;
   return aux;
 }
 
@@ -176,15 +176,15 @@ Vector3 Vector3::cross(const Vector3& r_vector) const {
 
 /// Norm
 /// @returns A scalar result of the norm of this.
-double Vector3::norm() const { return dot(*this); }
+double Vector3::norm() const { return sqrt(dot(*this)); }
 
 Vector3 operator*(const double value, const Vector3& r_vector) {
   return r_vector * value;
 }
 
 std::ostream& operator<<(std::ostream& os, const Vector3& r_vector) {
-  os << '[' << r_vector.x() << ',' << r_vector.y() << ',' << r_vector.z()
-     << ']';
+  os << "(x: " << r_vector.x() << ", y: " << r_vector.y() << ", z: " <<
+   r_vector.z() << ")";
   return os;
 }
 
