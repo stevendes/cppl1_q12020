@@ -13,7 +13,7 @@
 #include <sstream>
 #include <string>
 
-#include <isometry/isometry.hpp>
+#include <isometry/matrix3.hpp>
 #include "gtest/gtest.h"
 
 namespace ekumen {
