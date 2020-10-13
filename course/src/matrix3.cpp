@@ -11,21 +11,29 @@
 namespace ekumen {
 namespace math {
 
-Matrix3::Matrix3(const std::initializer_list<double>& list) {
-  if (list.size() != 9) {
-    throw std::out_of_range("Incorrect size of list");
+std::string row_print(const Vector3& r_vector) {
+  std::string aux;
+  aux = "[" + std::to_string(static_cast<int>(r_vector.x())) + ", " +
+        std::to_string(static_cast<int>(r_vector.y())) + ", " +
+        std::to_string(static_cast<int>(r_vector.z())) + "]";
+  return aux;
+}
+
+Matrix3::Matrix3(const std::initializer_list<double>& values) {
+  if (values.size() != 9) {
+    throw std::length_error("Incorrect size of list");
   }
-  auto it = list.begin();
+  auto it = values.begin();
+  for (int i = 0; i < 3; ++i) {
+    row_0_[i] = *it;
+    ++it;
+  }
   for (int i = 0; i < 3; ++i) {
     row_1_[i] = *it;
     ++it;
   }
   for (int i = 0; i < 3; ++i) {
     row_2_[i] = *it;
-    ++it;
-  }
-  for (int i = 0; i < 3; ++i) {
-    row_3_[i] = *it;
     if (i != 2) {
       ++it;
     }
@@ -35,11 +43,11 @@ Matrix3::Matrix3(const std::initializer_list<double>& list) {
 Vector3 Matrix3::operator[](const int i) const {
   switch (i) {
     case 0:
-      return row_1_;
+      return row_0_;
     case 1:
-      return row_2_;
+      return row_1_;
     case 2:
-      return row_3_;
+      return row_2_;
     default:
       throw std::out_of_range("Operator out of range");
   }
@@ -48,11 +56,11 @@ Vector3 Matrix3::operator[](const int i) const {
 Vector3& Matrix3::operator[](const int i) {
   switch (i) {
     case 0:
-      return row_1_;
+      return row_0_;
     case 1:
-      return row_2_;
+      return row_1_;
     case 2:
-      return row_3_;
+      return row_2_;
     default:
       throw std::out_of_range("Operator out of range");
   }
@@ -63,8 +71,8 @@ Matrix3 Matrix3::kOnes{Matrix3{1, 1, 1, 1, 1, 1, 1, 1, 1}};
 Matrix3 Matrix3::kZero{Matrix3()};
 
 bool Matrix3::operator==(const Matrix3& r_matrix) const {
-  return row_1_ == r_matrix.row_1_ && row_2_ == r_matrix.row_2_ &&
-         row_3_ == r_matrix.row_3_;
+  return row_0_ == r_matrix.row_0_ && row_1_ == r_matrix.row_1_ &&
+         row_2_ == r_matrix.row_2_;
 }
 
 bool Matrix3::operator!=(const Matrix3& r_matrix) const {
@@ -72,20 +80,19 @@ bool Matrix3::operator!=(const Matrix3& r_matrix) const {
 }
 
 double Matrix3::det() const {
-  double first_value, second_value, third_value;
-  first_value = (*this)[0][0] *
-                ((*this)[1][1] * (*this)[2][2] - (*this)[1][2] * (*this)[2][1]);
-  second_value = (*this)[0][1] * ((*this)[1][0] * (*this)[2][2] -
-                                  (*this)[1][2] * (*this)[2][0]);
-  third_value = (*this)[0][2] *
-                ((*this)[1][0] * (*this)[2][1] - (*this)[1][1] * (*this)[2][0]);
-  return first_value - second_value + third_value;
+  const double A = row_0_[0] *
+                (row_1_[1] * row_2_[2] - row_1_[2] * row_2_[1]);
+  const double B = row_0_[1] * (row_1_[0] * row_2_[2] -
+                                  row_1_[2] * row_2_[0]);
+  const double C = row_0_[2] *
+                (row_1_[0] * row_2_[1] - row_1_[1] * row_2_[0]);
+  return A - B + C;
 }
 
 Matrix3& Matrix3::operator+=(const Matrix3& r_matrix) {
-  row_1_ = row_1_ + r_matrix[0];
-  row_2_ = row_2_ + r_matrix[1];
-  row_3_ = row_3_ + r_matrix[2];
+  row_0_ = row_0_ + r_matrix[0];
+  row_1_ = row_1_ + r_matrix[1];
+  row_2_ = row_2_ + r_matrix[2];
   return *this;
 }
 
@@ -96,9 +103,9 @@ Matrix3 Matrix3::operator+(const Matrix3& r_matrix) const {
 }
 
 Matrix3& Matrix3::operator-=(const Matrix3& r_matrix) {
-  row_1_ = row_1_ - r_matrix[0];
-  row_2_ = row_2_ - r_matrix[1];
-  row_3_ = row_3_ - r_matrix[2];
+  row_0_ = row_0_ - r_matrix[0];
+  row_1_ = row_1_ - r_matrix[1];
+  row_2_ = row_2_ - r_matrix[2];
   return *this;
 }
 
@@ -109,9 +116,9 @@ Matrix3 Matrix3::operator-(const Matrix3& r_matrix) const {
 }
 
 Matrix3& Matrix3::operator*=(const double& value) {
+  row_0_ = row_0_ * value;
   row_1_ = row_1_ * value;
   row_2_ = row_2_ * value;
-  row_3_ = row_3_ * value;
   return *this;
 }
 
@@ -166,9 +173,9 @@ Matrix3& Matrix3::operator/=(const double& value) {
   if (value == 0) {
     throw std::invalid_argument("Try to divide by 0");
   }
+  row_0_ = row_0_ / value;
   row_1_ = row_1_ / value;
   row_2_ = row_2_ / value;
-  row_3_ = row_3_ / value;
   return *this;
 }
 
@@ -189,18 +196,10 @@ Matrix3 operator*(const double value, const Matrix3& r_matrix) {
   return r_matrix * value;
 }
 
-std::string Matrix3::row_print(const Vector3& r_vector) const {
-  std::string aux;
-  aux = "[" + std::to_string(static_cast<int>(r_vector.x())) + ", " +
-        std::to_string(static_cast<int>(r_vector.y())) + ", " +
-        std::to_string(static_cast<int>(r_vector.z())) + "]";
-  return aux;
-}
-
 std::ostream& operator<<(std::ostream& os, const Matrix3& r_matrix) {
-  os << "[" << r_matrix.row_print(r_matrix.row(0)) << ", "
-     << r_matrix.row_print(r_matrix.row(1)) << ", "
-     << r_matrix.row_print(r_matrix.row(2)) << "]";
+  os << "[" << row_print(r_matrix.row(0)) << ", "
+     << row_print(r_matrix.row(1)) << ", "
+     << row_print(r_matrix.row(2)) << "]";
   return os;
 }
 
