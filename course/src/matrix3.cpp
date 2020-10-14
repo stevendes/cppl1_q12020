@@ -12,10 +12,10 @@ namespace ekumen {
 namespace math {
 
 std::string row_print(const Vector3& r_vector) {
-  std::string aux;
-  aux = "[" + std::to_string(static_cast<int>(r_vector.x())) + ", " +
-        std::to_string(static_cast<int>(r_vector.y())) + ", " +
-        std::to_string(static_cast<int>(r_vector.z())) + "]";
+  std::stringstream ss(std::ios_base::in | std::ios_base::out);
+  ss << "[" << r_vector.x() << ", " << r_vector.y() << ", " << r_vector.z()
+     << "]";
+  std::string aux = ss.str();
   return aux;
 }
 
@@ -80,12 +80,9 @@ bool Matrix3::operator!=(const Matrix3& r_matrix) const {
 }
 
 double Matrix3::det() const {
-  const double A = row_0_[0] *
-                (row_1_[1] * row_2_[2] - row_1_[2] * row_2_[1]);
-  const double B = row_0_[1] * (row_1_[0] * row_2_[2] -
-                                  row_1_[2] * row_2_[0]);
-  const double C = row_0_[2] *
-                (row_1_[0] * row_2_[1] - row_1_[1] * row_2_[0]);
+  const double A = row_0_[0] * (row_1_[1] * row_2_[2] - row_1_[2] * row_2_[1]);
+  const double B = row_0_[1] * (row_1_[0] * row_2_[2] - row_1_[2] * row_2_[0]);
+  const double C = row_0_[2] * (row_1_[0] * row_2_[1] - row_1_[1] * row_2_[0]);
   return A - B + C;
 }
 
@@ -197,9 +194,8 @@ Matrix3 operator*(const double value, const Matrix3& r_matrix) {
 }
 
 std::ostream& operator<<(std::ostream& os, const Matrix3& r_matrix) {
-  os << "[" << row_print(r_matrix.row(0)) << ", "
-     << row_print(r_matrix.row(1)) << ", "
-     << row_print(r_matrix.row(2)) << "]";
+  os << "[" << row_print(r_matrix.row(0)) << ", " << row_print(r_matrix.row(1))
+     << ", " << row_print(r_matrix.row(2)) << "]";
   return os;
 }
 
