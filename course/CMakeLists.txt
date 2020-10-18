@@ -20,6 +20,7 @@ include_directories(
 set(LIBRARY_SOURCES
 	src/isometry.cpp
 	src/vector3.cpp
+	src/matrix3.cpp
 )
 
 # Library creation.
