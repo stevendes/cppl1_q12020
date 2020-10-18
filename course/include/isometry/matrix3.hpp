@@ -17,7 +17,7 @@ class Matrix3 {
  public:
   /// Constructs a Matrix3.
   /// @param values List of values to construct the matrix3.
-  Matrix3(const std::initializer_list<double>& values);
+  explicit Matrix3(const std::initializer_list<double>& values);
 
   /// Constructs a zero Matrix3.
   Matrix3() : row_0_{0, 0, 0}, row_1_{0, 0, 0}, row_2_{0, 0, 0} {};

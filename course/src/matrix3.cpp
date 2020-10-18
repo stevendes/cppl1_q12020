@@ -11,6 +11,8 @@
 namespace ekumen {
 namespace math {
 
+namespace {
+
 std::string row_print(const Vector3& r_vector) {
   std::stringstream ss(std::ios_base::in | std::ios_base::out);
   ss << "[" << r_vector.x() << ", " << r_vector.y() << ", " << r_vector.z()
@@ -18,6 +20,8 @@ std::string row_print(const Vector3& r_vector) {
   std::string aux = ss.str();
   return aux;
 }
+
+}  // namespace
 
 Matrix3::Matrix3(const std::initializer_list<double>& values) {
   if (values.size() != 9) {
