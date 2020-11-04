@@ -8,6 +8,7 @@
 #pragma once
 
 #include <isometry/vector3.hpp>
+#include <iomanip>
 #include <sstream>
 
 namespace ekumen {

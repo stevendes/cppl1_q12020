@@ -20,15 +20,25 @@ namespace math {
 
 class Isometry {
  public:
+  /// Constructs an Isometry with default values.
   Isometry() : rotation_matrix{Matrix3::kIdentity} {};
 
+  /// Constructs an Isometry.
+  /// @param r_vector Initial value of the translation vector.
+  /// @param r_matrix Initial value of the rotation matrix.
   Isometry(const Vector3& r_vector, const Matrix3& r_matrix)
       : translation_vector{r_vector}, rotation_matrix{r_matrix}{};
 
+  /// Gets the Isometry matrix from a vector
+  /// @param r_vector Value of the translation vector.
   static Isometry fromTranslation(const Vector3& r_vector);
 
-  static Isometry fromEulerAngles(const float& roll, const float& pitch,
-                                  const float& yaw);
+  /// Gets the Isometry matrix from Euler angles
+  /// @param roll Value of the roll angle.
+  /// @param pitch Value of the pitch angle.
+  /// @param yaw Value of the yaw angle.
+  static Isometry fromEulerAngles(const double& roll, const double& pitch,
+                                  const double& yaw);
 
   Vector3 translation() const;
 
@@ -38,8 +48,13 @@ class Isometry {
 
   Matrix3 rotation() const;
 
-  static Isometry rotateAround(const Vector3& r_vector, const float& angle);
+  /// Gets the Isometry matrix from rotation a certain angle around a given direction unitary-vector
+  /// @param r_vector Unitary Vector to rotate around.
+  /// @param angle Value of the angle of rotation.
+  static Isometry rotateAround(const Vector3& r_vector, const double& angle);
 
+  /// Gets the Isometry matrix of the result of a composed movement with a given Isometry Matrix
+  /// @param r_isometry Isometry matrix of the given movement.
   Isometry compose(const Isometry& r_isometry) const;
 
   bool operator==(const Isometry& r_isometry) const;

@@ -32,33 +32,11 @@ Vector3 translation_vector_operation(const Matrix3& matrix,
   return aux;
 }
 
-float determinant2(std::vector<std::vector<float>> minor) {
-  float det = minor[0][0] * minor[1][1] - minor[0][1] * minor[1][0];
-  return det;
-}
-
-Matrix3 matrix_minor(const Matrix3& r_matrix) {
+Matrix3 transpose(const Matrix3& matrix) {
   Matrix3 aux;
-  std::vector<std::vector<float>> minor;
-  int minor_row, minor_col;
-  for (int row = 0; row < 3; ++row) {
-    for (int col = 0; col < 3; ++col) {
-      for (int i = 0; i < 3; i++) {
-        minor_row = i;
-        if (i > row) {
-          --minor_row;
-        }
-        for (int j = 0; j < 3; j++) {
-          minor_col = j;
-          if (j > col) {
-            --minor_col;
-          }
-          if (i != row && j != col) {
-            minor[minor_row][minor_col] = r_matrix[i][j];
-          }
-        }
-      }
-      aux[row][col] = determinant2(minor);
+  for (int i = 0; i < 3; ++i) {
+    for (int j = 0; j < 3; ++j) {
+      aux[i][j] = matrix[j][i];
     }
   }
   return aux;
@@ -69,7 +47,6 @@ Matrix3 matrix_minor(const Matrix3& r_matrix) {
 
 Isometry Isometry::fromTranslation(const Vector3& r_vector) {
   Isometry aux;
-  aux.rotation_matrix = Matrix3::kIdentity;
   aux.translation_vector = r_vector;
   return aux;
 }
@@ -86,16 +63,39 @@ Vector3 Isometry::transform(const Vector3& r_vector) const {
 }
 
 Isometry Isometry::inverse() const {
-  Isometry aux{*this};
-  double determinant;
-  determinant = aux.rotation_matrix.det();
-  if (determinant == 0) {
+  double deter = rotation_matrix.det();
+  if (deter == 0) {
     throw std::out_of_range("Isometry doesn't have an inverse");
   }
-  aux.rotation_matrix = matrix_minor(aux.rotation_matrix) *
-                        (Matrix3{1., -1., 1., -1., 1., -1., 1., -1., 1});
-  aux.translation_vector = aux.rotation_matrix * aux.translation_vector;
-  return *this;
+  Matrix3 aux;
+  aux = transpose(aux);
+  aux[0][0] = rotation_matrix[1][1] * rotation_matrix[2][2] -
+      rotation_matrix[1][2] * rotation_matrix[2][1];
+  aux[0][1] = rotation_matrix[1][0] * rotation_matrix[2][2] -
+      rotation_matrix[1][2] * rotation_matrix[2][0];
+  aux[0][2] = rotation_matrix[1][0] * rotation_matrix[2][1] -
+      rotation_matrix[1][1] * rotation_matrix[2][0];
+  aux[1][0] = rotation_matrix[0][1] * rotation_matrix[2][2] -
+      rotation_matrix[0][2] * rotation_matrix[2][1];
+  aux[1][1] = rotation_matrix[0][0] * rotation_matrix[2][2] -
+      rotation_matrix[0][2] * rotation_matrix[2][0];
+  aux[1][2] = rotation_matrix[0][0] * rotation_matrix[1][2] -
+      rotation_matrix[0][2] * rotation_matrix[1][0];
+  aux[2][0] = rotation_matrix[0][1] * rotation_matrix[1][2] -
+      rotation_matrix[0][2] * rotation_matrix[1][1];
+  aux[2][1] = rotation_matrix[0][0] * rotation_matrix[1][2] -
+      rotation_matrix[0][2] * rotation_matrix[1][0];
+  aux[2][2] = rotation_matrix[0][0] * rotation_matrix[1][1] -
+      rotation_matrix[0][1] * rotation_matrix[1][0];
+  aux = (aux * Matrix3{
+    1., -1., 1., -1., 1., -1., 1., -1., 1.});
+
+  Isometry result;
+  aux /= deter;
+  result.rotation_matrix = aux;
+  result.translation_vector = (result.rotation_matrix *
+      translation_vector) * -1;
+  return result;
 }
 
 Matrix3 Isometry::rotation() const {
@@ -108,29 +108,31 @@ Isometry Isometry::compose(const Isometry& r_isometry) const {
   return aux;
 }
 
-Isometry Isometry::rotateAround(const Vector3& r_vector, const float& angle) {
+Isometry Isometry::rotateAround(const Vector3& r_vector, const double& angle) {
   Isometry aux;
-  if (r_vector == Vector3::kUnitX) {
-    Matrix3 aux_matrix{1.,          0., 0.,         0.,        std::cos(angle),
-                       -std::sin(angle), 0., std::sin(angle), std::cos(angle)};
-    aux.rotation_matrix = aux.rotation_matrix;
-  } else if (r_vector == Vector3::kUnitY) {
-    Matrix3 aux_matrix{std::cos(angle), 0.,      -std::sin(angle), 0.,     1.,
-                       0,        std::sin(angle), 0,         std::cos(angle)};
-    aux.rotation_matrix = aux.rotation_matrix;
-  } else if (r_vector == Vector3::kUnitZ) {
-    Matrix3 aux_matrix{std::cos(angle), -std::sin(angle), 0.,
-                       std::sin(angle), std::cos(angle), 0.,
-                      0., 0., 1.};
-    aux.rotation_matrix = aux.rotation_matrix;
-  } else {
-    throw std::out_of_range("Vector is not an axis");
-  }
+  aux.rotation_matrix[0][0] = std::cos(angle) + pow(r_vector[0], 2)
+  * (1 - std::cos(angle));
+  aux.rotation_matrix[0][1] = r_vector[0] * r_vector[1] *
+  (1 - std::cos(angle)) - r_vector[2] * std::sin(angle);
+  aux.rotation_matrix[0][2] = r_vector[0] * r_vector[2] *
+  (1 - std::cos(angle)) + r_vector[1] * std::sin(angle);
+  aux.rotation_matrix[1][0] = r_vector[1] * r_vector[0] *
+  (1 - std::cos(angle)) + r_vector[2] * std::sin(angle);
+  aux.rotation_matrix[1][1] = std::cos(angle) + pow(r_vector[1], 2)
+  * (1 - std::cos(angle));
+  aux.rotation_matrix[1][2] = r_vector[1] * r_vector[2] *
+  (1 - std::cos(angle)) - r_vector[0] * std::sin(angle);
+  aux.rotation_matrix[2][0] = r_vector[2] * r_vector[0] *
+  (1 - std::cos(angle)) - r_vector[1] * std::sin(angle);
+  aux.rotation_matrix[2][1] = r_vector[2] * r_vector[1] *
+  (1 - std::cos(angle)) + r_vector[0] * std::sin(angle);
+  aux.rotation_matrix[2][2] = std::cos(angle) + pow(r_vector[2], 2)
+  * (1 - std::cos(angle));
   return aux;
 }
 
-Isometry Isometry::fromEulerAngles(const float& roll, const float& pitch,
-                                   const float& yaw) {
+Isometry Isometry::fromEulerAngles(const double& roll, const double& pitch,
+                                   const double& yaw) {
   Isometry aux = Isometry::rotateAround(Vector3::kUnitX, roll) *
                  Isometry::rotateAround(Vector3::kUnitY, pitch) *
                  Isometry::rotateAround(Vector3::kUnitZ, yaw);
@@ -148,7 +150,7 @@ bool Isometry::operator!=(const Isometry& r_isometry) const {
 
 Vector3 Isometry::operator*(const Vector3& r_vector) const {
   Vector3 aux = translation_vector_operation(rotation_matrix,
-                                             translation_vector, r_vector);
+                                             r_vector, translation_vector);
   return aux;
 }
 
@@ -168,7 +170,7 @@ Isometry& Isometry::operator*=(const Isometry& r_isometry) {
 
 std::ostream& operator<<(std::ostream& os, const Isometry& r_isometry) {
   os << "[T: " << r_isometry.translation() << ", "
-     << "[R: " << r_isometry.rotation() << "]";
+     << "R:" << r_isometry.rotation() << "]";
   return os;
 }
 

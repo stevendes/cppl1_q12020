@@ -15,6 +15,7 @@ namespace {
 
 std::string row_print(const Vector3& r_vector) {
   std::stringstream ss(std::ios_base::in | std::ios_base::out);
+  ss << std::setprecision(9);
   ss << "[" << r_vector.x() << ", " << r_vector.y() << ", " << r_vector.z()
      << "]";
   std::string aux = ss.str();
