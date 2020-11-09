@@ -91,6 +91,28 @@ double Matrix3::det() const {
   return A - B + C;
 }
 
+Matrix3 Matrix3::product(const Matrix3& r_matrix) const {
+  Matrix3 aux;
+  for (int i = 0; i < 3; ++i) {
+    for (int j = 0; j < 3; ++j) {
+      for (int iter = 0; iter < 3; ++iter) {
+        aux[i][j] += (*this)[iter][i] * r_matrix[j][iter];
+      }
+    }
+  }
+  return aux;
+}
+
+Matrix3 Matrix3::transpose() const {
+  Matrix3 aux;
+  for (int i = 0; i < 3; ++i) {
+    for (int j = 0; j < 3; ++j) {
+      aux[i][j] = (*this)[j][i];
+    }
+  }
+  return aux;
+}
+
 Matrix3& Matrix3::operator+=(const Matrix3& r_matrix) {
   row_0_ = row_0_ + r_matrix[0];
   row_1_ = row_1_ + r_matrix[1];

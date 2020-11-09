@@ -44,6 +44,12 @@ class Matrix3 {
   /// Outputs the determinant of the Matrix.
   double det() const;
 
+  //  Outputs the product of two matrices
+  Matrix3 product(const Matrix3& r_matrix) const;
+
+  // Outputs the transpose of the matrix 
+  Matrix3 transpose() const;
+
   Matrix3& operator+=(const Matrix3& r_matrix);
   Matrix3 operator+(const Matrix3& r_matrix) const;
   Matrix3& operator-=(const Matrix3& r_matrix);
