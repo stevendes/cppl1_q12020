@@ -82,8 +82,8 @@ GTEST_TEST(IsometryTest, IsometryFullTests) {
 
   EXPECT_EQ(t3.translation(), Vector3::kZero);
   const double pi_8{M_PI / 8.};
-  const double cpi_8{std::cos(static_cast<double>(pi_8))};  // 0.923879532
-  const double spi_8{std::sin(static_cast<double>(pi_8))};  // 0.382683432
+  const double cpi_8{std::cos(pi_8)};  // 0.923879532
+  const double spi_8{std::sin(pi_8)};  // 0.382683432
   EXPECT_TRUE(areAlmostEqual(
       t5.rotation(), Matrix3{cpi_8, -spi_8, 0., spi_8, cpi_8, 0., 0., 0., 1.},
       kTolerance));

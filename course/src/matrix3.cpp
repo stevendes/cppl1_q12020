@@ -95,9 +95,7 @@ Matrix3 Matrix3::product(const Matrix3& r_matrix) const {
   Matrix3 aux;
   for (int i = 0; i < 3; ++i) {
     for (int j = 0; j < 3; ++j) {
-      for (int iter = 0; iter < 3; ++iter) {
-        aux[i][j] += (*this)[iter][i] * r_matrix[j][iter];
-      }
+        aux[i][j] = ((*this).col(i)).dot(r_matrix.row(j));
     }
   }
   return aux;

@@ -15,70 +15,60 @@ namespace {
 Vector3 translation_vector_operation(const Matrix3& matrix,
                                      const Vector3& first_vector,
                                      const Vector3& second_vector) {
-  Vector3 aux;
-  aux = matrix * first_vector + second_vector;
-  return aux;
+  return matrix * first_vector + second_vector;
 }
 
 }  // namespace
 
 
 Isometry Isometry::fromTranslation(const Vector3& r_vector) {
-  Isometry aux;
-  aux.translation_vector = r_vector;
-  return aux;
+  return Isometry{r_vector, Matrix3::kIdentity};
 }
 
 Vector3 Isometry::translation() const {
-  Vector3 aux{translation_vector};
-  return aux;
+  return  Vector3{translation_vector};
 }
 
 Vector3 Isometry::transform(const Vector3& r_vector) const {
-  Vector3 aux;
-  aux = (*this) * r_vector;
-  return aux;
+  return (*this) * r_vector;
 }
 
 Isometry Isometry::inverse() const {
-  double deter = rotation_matrix.det();
-  if (deter == 0) {
+  const double det = rotation_matrix.det();
+  if (det == 0) {
     throw std::invalid_argument("Isometry doesn't have an inverse");
   }
-  Matrix3 aux;
-  aux = aux.transpose();
-  aux[0][0] = rotation_matrix[1][1] * rotation_matrix[2][2] -
-      rotation_matrix[1][2] * rotation_matrix[2][1];
-  aux[0][1] = rotation_matrix[1][0] * rotation_matrix[2][2] -
-      rotation_matrix[1][2] * rotation_matrix[2][0];
-  aux[0][2] = rotation_matrix[1][0] * rotation_matrix[2][1] -
-      rotation_matrix[1][1] * rotation_matrix[2][0];
-  aux[1][0] = rotation_matrix[0][1] * rotation_matrix[2][2] -
-      rotation_matrix[0][2] * rotation_matrix[2][1];
-  aux[1][1] = rotation_matrix[0][0] * rotation_matrix[2][2] -
-      rotation_matrix[0][2] * rotation_matrix[2][0];
-  aux[1][2] = rotation_matrix[0][0] * rotation_matrix[1][2] -
-      rotation_matrix[0][2] * rotation_matrix[1][0];
-  aux[2][0] = rotation_matrix[0][1] * rotation_matrix[1][2] -
-      rotation_matrix[0][2] * rotation_matrix[1][1];
-  aux[2][1] = rotation_matrix[0][0] * rotation_matrix[1][2] -
-      rotation_matrix[0][2] * rotation_matrix[1][0];
-  aux[2][2] = rotation_matrix[0][0] * rotation_matrix[1][1] -
-      rotation_matrix[0][1] * rotation_matrix[1][0];
+  Matrix3 transpose_matrix{rotation_matrix};
+  transpose_matrix = transpose_matrix.transpose();
+  const double c_00 = transpose_matrix[1][1] * transpose_matrix[2][2] -
+      transpose_matrix[1][2] * transpose_matrix[2][1];
+  const double c_01 = transpose_matrix[1][0] * transpose_matrix[2][2] -
+      transpose_matrix[1][2] * transpose_matrix[2][0];
+  const double c_02 = transpose_matrix[1][0] * transpose_matrix[2][1] -
+      transpose_matrix[1][1] * transpose_matrix[2][0];
+  const double c_10 = transpose_matrix[0][1] * transpose_matrix[2][2] -
+      transpose_matrix[0][2] * transpose_matrix[2][1];
+  const double c_11 = transpose_matrix[0][0] * transpose_matrix[2][2] -
+      transpose_matrix[0][2] * transpose_matrix[2][0];
+  const double c_12 = transpose_matrix[0][0] * transpose_matrix[1][2] -
+      transpose_matrix[0][2] * transpose_matrix[1][0];
+  const double c_20 = transpose_matrix[0][1] * transpose_matrix[1][2] -
+      transpose_matrix[0][2] * transpose_matrix[1][1];
+  const double c_21 = transpose_matrix[0][0] * transpose_matrix[1][2] -
+      transpose_matrix[0][2] * transpose_matrix[1][0];
+  const double c_22 = transpose_matrix[0][0] * transpose_matrix[1][1] -
+      transpose_matrix[0][1] * transpose_matrix[1][0];
+
+  Matrix3 aux{c_00, c_01, c_02, c_10, c_11, c_12, c_20, c_21, c_22};
   aux = (aux * Matrix3{
     1., -1., 1., -1., 1., -1., 1., -1., 1.});
 
-  Isometry result;
-  aux /= deter;
-  result.rotation_matrix = aux;
-  result.translation_vector = (result.rotation_matrix *
-      translation_vector) * -1;
-  return result;
+  aux /= det;
+  return Isometry{aux * translation_vector * -1, aux};
 }
 
 Matrix3 Isometry::rotation() const {
-  Matrix3 aux{rotation_matrix};
-  return aux;
+  return rotation_matrix;
 }
 
 Isometry Isometry::compose(const Isometry& r_isometry) const {
