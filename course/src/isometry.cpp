@@ -26,7 +26,7 @@ Isometry Isometry::fromTranslation(const Vector3& r_vector) {
 }
 
 Vector3 Isometry::translation() const {
-  return  Vector3{translation_vector};
+  return translation_vector;
 }
 
 Vector3 Isometry::transform(const Vector3& r_vector) const {
@@ -38,8 +38,7 @@ Isometry Isometry::inverse() const {
   if (det == 0) {
     throw std::invalid_argument("Isometry doesn't have an inverse");
   }
-  Matrix3 transpose_matrix{rotation_matrix};
-  transpose_matrix = transpose_matrix.transpose();
+  const Matrix3 transpose_matrix{rotation_matrix.transpose()};
   const double c_00 = transpose_matrix[1][1] * transpose_matrix[2][2] -
       transpose_matrix[1][2] * transpose_matrix[2][1];
   const double c_01 = transpose_matrix[1][0] * transpose_matrix[2][2] -
