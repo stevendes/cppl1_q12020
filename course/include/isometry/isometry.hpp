@@ -21,13 +21,13 @@ namespace math {
 class Isometry {
  public:
   /// Constructs an Isometry with default values.
-  Isometry() : rotation_matrix{Matrix3::kIdentity} {};
+  Isometry() : rotation_matrix_{Matrix3::kIdentity} {};
 
   /// Constructs an Isometry.
   /// @param r_vector Initial value of the translation vector.
   /// @param r_matrix Initial value of the rotation matrix.
   Isometry(const Vector3& r_vector, const Matrix3& r_matrix)
-      : translation_vector{r_vector}, rotation_matrix{r_matrix}{};
+      : translation_vector_{r_vector}, rotation_matrix_{r_matrix}{};
 
   /// Gets the Isometry matrix from a vector
   /// @param r_vector Value of the translation vector.
@@ -67,8 +67,8 @@ class Isometry {
   Isometry& operator*=(const Isometry& r_isometry);
 
  private:
-  Vector3 translation_vector; 
-  Matrix3 rotation_matrix;
+  Vector3 translation_vector_; 
+  Matrix3 rotation_matrix_;
 };
 
 std::ostream& operator<<(std::ostream& os, const Isometry& r_isometry);
