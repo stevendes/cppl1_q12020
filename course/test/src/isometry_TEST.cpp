@@ -96,11 +96,11 @@ GTEST_TEST(IsometryTest, IsometryFullTests) {
   EXPECT_EQ(ss.str(), answer);
 
   Isometry t7;
-  EXPECT_EQ(t7.rotation()[2][2], 0);
+  EXPECT_EQ(t7.rotation()[2][2], 1);
   EXPECT_EQ(t7.translation()[2], 0);
 
   Isometry t8 = Isometry();
-  EXPECT_EQ(t8.rotation()[2][2], 0);
+  EXPECT_EQ(t8.rotation()[2][2], 1);
   EXPECT_EQ(t8.translation()[2], 0);
 
   Isometry t9 = Isometry::fromTranslation(Vector3{1., 2., 3.});

@@ -15,6 +15,7 @@ namespace {
 
 std::string row_print(const Vector3& r_vector) {
   std::stringstream ss(std::ios_base::in | std::ios_base::out);
+  ss << std::setprecision(9);
   ss << "[" << r_vector.x() << ", " << r_vector.y() << ", " << r_vector.z()
      << "]";
   std::string aux = ss.str();
@@ -88,6 +89,26 @@ double Matrix3::det() const {
   const double B = row_0_[1] * (row_1_[0] * row_2_[2] - row_1_[2] * row_2_[0]);
   const double C = row_0_[2] * (row_1_[0] * row_2_[1] - row_1_[1] * row_2_[0]);
   return A - B + C;
+}
+
+Matrix3 Matrix3::product(const Matrix3& r_matrix) const {
+  Matrix3 aux;
+  for (int i = 0; i < 3; ++i) {
+    for (int j = 0; j < 3; ++j) {
+        aux[i][j] = row(i).dot(r_matrix.col(j));
+    }
+  }
+  return aux;
+}
+
+Matrix3 Matrix3::transpose() const {
+  Matrix3 aux;
+  for (int i = 0; i < 3; ++i) {
+    for (int j = 0; j < 3; ++j) {
+      aux[i][j] = (*this)[j][i];
+    }
+  }
+  return aux;
 }
 
 Matrix3& Matrix3::operator+=(const Matrix3& r_matrix) {
